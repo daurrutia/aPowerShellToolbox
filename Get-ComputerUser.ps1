@@ -5,7 +5,7 @@
 .DESCRIPTION
    Gets printer and user details for a list of computer names.
    Returns printer WMI details and primary end-user AD details for each computer listed in computers.txt
-   Requires the Configuration Manager (SCCM) module and the Active Directory module
+   **Requires the Configuration Manager (SCCM) module and the Active Directory module
    Tested on Windows Server 2008 R2 and System Center 2012
    Author: David U. | Operations
 .EXAMPLE
