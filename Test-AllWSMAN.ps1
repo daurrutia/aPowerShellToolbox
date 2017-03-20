@@ -1,4 +1,4 @@
-﻿<#
+<#
 .Synopsis
    Tests to see if WSMAN (WinRM) is running on ALL domain joined computers.
 .DESCRIPTION
