@@ -1,4 +1,4 @@
-﻿<#
+<#
 .Synopsis
    Gets disk information for all domain joined computers.
 .DESCRIPTION
