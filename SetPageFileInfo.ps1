@@ -1,5 +1,5 @@
 ﻿#SetPageFileInfo
-#David U. | Operations
+#David U. 
 #Description: Sets various WMI properties on a list of computers  in local directory (COMPUTERS.TXT).
 #Changes: 
 #If page file is not automatically configured it will be removed from C: and created on D:

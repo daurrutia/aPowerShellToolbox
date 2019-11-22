@@ -9,7 +9,7 @@
    Get-CimInstance -ClassName win32_logicaldisk -Filter drivetype=3 | select *
    Get-CimInstance -ClassName cim_logicaldisk | Select-Object SystemName,DeviceID,@{n="Size";e={[math]::Round($_.Size/1GB,2)}},@{n="Used";e={[math]::Round(($_.Size - $_.FreeSpace) /1GB,2)}} ,@{n="FreeSpace";e={[math]::Round($_.FreeSpace/1GB,2)}} 
 
-   Author: David U. | Engineeering
+   Author: David U. 
 .EXAMPLE
    Get-DiskInfo
 .EXAMPLE

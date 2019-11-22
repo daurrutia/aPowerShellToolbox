@@ -6,7 +6,7 @@
    Tested on Windows Server 2012 R2, Windows Server 2008 R2
    Requires Enterprise Admin and Schema Admin membership
    Note: SchemaMaster = 3, PDCEmulator = 0, RIDMaster = 1, InfrastructureMaster = 2, DomainNamingMaster = 4
-   Author: David U. | Engineering
+   Author: David U. 
 .EXAMPLE
    Example of how to use this cmdlet
 .EXAMPLE

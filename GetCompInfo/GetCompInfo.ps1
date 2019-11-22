@@ -1,10 +1,10 @@
-﻿#Name:        GetCompInfo.ps1  --> with Default Route info
-#Author:      David A. Urrutia | Problem Management
-#Description: Exports a CSV report of WMI objects of computers retrieved from COMPUTERS.TXT or AD (servers only).
+﻿# Name:        GetCompInfo.ps1
+# Author:      David A. Urrutia 
+# 6/2015
+# Description: Exports a CSV report of WMI objects of computers retrieved from COMPUTERS.TXT or AD (servers only).
 #             (ComputerName,OS,SP,InstallDate,LastBootTime,Manufacturer,Model,"PhysicalMemory(GB)",NumOfProcessors,
 #             NumOfCores,NumOfLogicalProcessors,"SerialNumber(BIOS)","SerialNumber(Encl)",LogicalDrives,PageFile)
 #             In order to query AD, the Powershell AD Module must be installed on the computer on which the script is running.
-# 7/2015
 
 #Variable declaration
 $array =@()
@@ -28,19 +28,19 @@ Do{
     if(!$userInYesComp){
         $input = $True
         $useList = $True
-        Write-Host "COMPUTERS.TXT will be used." 
+        Write-Host "GET-ADComputer will not be used. COMPUTERS.TXT will be used." #TEST
     }#end if
 
     if(!$userInNoComp){
         $input = $True
-        Write-Host "GET-ADComputer will be used." 
+        Write-Host "COMPUTERS.TXT will not be used. GET-ADComputer will be used." #TEST
     }#end if
     
     $countIn++
 
 }While(!$input)
 
-Write-Host -ForegroundColor Green "- - - - - - - - - - - - - - - -"     #console formatting
+Write-Host "- - - - - - - - - - - - - - - -"     #console formatting
 
 #get machine names
 if($useList){
@@ -70,8 +70,6 @@ ForEach ($computer in $computers){
     $encSerial = "N/A"
     $drivelist = "N/A"
     $pgName = "N/A"
-    $rtName = "N/A"
-    $rtNextHop = "N/A"
     
     if($useList){
         #pass computer name to $machine
@@ -145,16 +143,11 @@ ForEach ($computer in $computers){
             
             #Logical drives
             $driveInfo = Get-WmiObject win32_logicaldisk -ComputerName $machine -filter "drivetype=3"
-            $driveList = ($driveInfo.DeviceID -join ', ')
+            $driveList = ($driveInfo.DeviceID -join ',')
 
             #PageFile usage info
             $pgUsage = Get-WmiObject -Class Win32_PageFileUsage -ComputerName $machine
             $pgName = ($pgUsage.Name -join ',')
-
-            #DefaultRouteInfo
-            $rt = Get-WmiObject -Class Win32_IP4RouteTable -ComputerName $machine | ?{$_.Name -match "0.0.0.0"}
-            $rtName = ($rt.Name -join ';')
-            $rtNextHop = ($rt.NextHop -join '; ')
             
             #Create and Add info to object
             $obj = New-Object PSCustomObject 
@@ -173,10 +166,8 @@ ForEach ($computer in $computers){
             $obj | Add-Member -MemberType NoteProperty -Name "SerialNumber(Encl)" -Value $encSerial
             $obj | Add-Member -MemberType NoteProperty -Name "LogicalDrives" -Value $driveList
             $obj | Add-Member -MemberType NoteProperty -Name "PageFile" -Value $pgName
-            $obj | Add-Member -MemberType NoteProperty -Name "DefaultRoute" -Value $rtName
-            $obj | Add-Member -MemberType NoteProperty -Name "Gateway" -Value $rtNextHop
             $obj | Add-Member -MemberType NoteProperty -Name "Error" -Value "N/A"
-                                    
+                        
             #Add object to array          
             $array += $obj
 
@@ -187,7 +178,7 @@ ForEach ($computer in $computers){
             $osDate ="N/A"
             $osBoot = "N/A"
 
-            Write-Host -ForegroundColor Yellow  "$machine error occured." $error[0]
+            Write-Host -ForegroundColor red  "$machine error occured." $error[0]
 
             #Create and Add info to object
             $obj = New-Object PSCustomObject 
@@ -206,8 +197,6 @@ ForEach ($computer in $computers){
             $obj | Add-Member -MemberType NoteProperty -Name "SerialNumber(Encl)" -Value $encSerial
             $obj | Add-Member -MemberType NoteProperty -Name "LogicalDrives" -Value $driveList
             $obj | Add-Member -MemberType NoteProperty -Name "PageFile" -Value $pgName
-            $obj | Add-Member -MemberType NoteProperty -Name "DefaultRoute" -Value $rtName
-            $obj | Add-Member -MemberType NoteProperty -Name "Gateway" -Value $rtNextHop
             $obj | Add-Member -MemberType NoteProperty -Name "Error" -Value $error[0]
                         
             #Add object to array          
@@ -219,7 +208,7 @@ ForEach ($computer in $computers){
 
     else{ #test-connection false
         
-        Write-Host -ForegroundColor Yellow "$machine Unreachable"
+        Write-Host -ForegroundColor red "$machine Unreachable"
 
         #Create and Add info to object
             $obj = New-Object PSCustomObject 
@@ -238,8 +227,6 @@ ForEach ($computer in $computers){
             $obj | Add-Member -MemberType NoteProperty -Name "SerialNumber(Encl)" -Value $encSerial
             $obj | Add-Member -MemberType NoteProperty -Name "LogicalDrives" -Value $driveList
             $obj | Add-Member -MemberType NoteProperty -Name "PageFile" -Value $pgName
-            $obj | Add-Member -MemberType NoteProperty -Name "DefaultRoute" -Value $rtName
-            $obj | Add-Member -MemberType NoteProperty -Name "Gateway" -Value $rtNextHop
             $obj | Add-Member -MemberType NoteProperty -Name "Error" -Value "Unreachable"
                         
             #Add object to array          
@@ -255,10 +242,10 @@ ForEach ($computer in $computers){
 
 Write-Host "End of $count queries."
 
-$csvFile = "DefaultRoute-Report-" + (Get-Date -Format yyyMMddHHmm) + ".csv"
+$csvFile = "ComputerInfo-Report-" + (Get-Date -Format yyyMMddHHmm) + ".csv"
 
-$array | select ComputerName,OS,SP,DefaultRoute,Gateway,InstallDate,LastBootTime,Manufacturer,Model,
-"PhysicalMemory(GB)",NumOfProcessors,NumOfCores,NumOfLogicalProcessors,"SerialNumber(BIOS)","SerialNumber(Encl)",
-LogicalDrives,PageFile,Error | Export-Csv $csvFile -NoTypeInformation
+$array | select ComputerName,OS,SP,InstallDate,LastBootTime,Manufacturer,Model,"PhysicalMemory(GB)",NumOfProcessors,
+NumOfCores,NumOfLogicalProcessors,"SerialNumber(BIOS)","SerialNumber(Encl)",LogicalDrives,PageFile,
+Error | Export-Csv $csvFile -NoTypeInformation
 
 Write-Host "CSV file exported to $pwd"

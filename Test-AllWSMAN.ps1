@@ -10,7 +10,7 @@
    If ping does not return successfully, an object is created stating the computer is 
    offline and the WinRM status is unknown and outputs the object.
 
-   Author: David U. | Engineering
+   Author: David U. 
 .EXAMPLE
    Test-AllWSMAN
 .EXAMPLE

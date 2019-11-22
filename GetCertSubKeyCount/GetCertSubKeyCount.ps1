@@ -1,5 +1,5 @@
 ﻿# GetCertSubKeyCount.ps1
-# Author:          David A. Urrutia | Problem Management | 6/2015
+# Author:          David A. Urrutia | 6/2015
 # Description:     Gets all AD "server" computers, then
 #                  gets the SubKey Count for the Certificates key for each computer.
 #                  Adds ComputerName, SubKeyCount, and any Error message(s) to an array.
